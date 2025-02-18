@@ -19,48 +19,48 @@ const Home = () => {
 
     const fetchData = () => {
         setLoading(true);
-        axiosApi.get("meals.json").then(function(response) {
+        axiosApi.get("meals.json").then((response)=> {
             if (response.data) {
-                const meals = Object.keys(response.data).map(function(key) {
+                const meals = Object.keys(response.data).map((key)=> {
                     return { ...response.data[key], id: key };
                 });
 
-                meals.sort(function(a, b) {
+                meals.sort((a, b)=> {
                     return new Date(b.meal_date).getTime() - new Date(a.meal_date).getTime();
                 });
 
-                const todayMeals = meals.filter(function(meal) {
+                const todayMeals = meals.filter((meal)=> {
                     return new Date(meal.meal_date).toDateString() === today.toDateString();
                 });
 
                 let totalCalories = 0;
-                todayMeals.forEach(function(meal) {
+                todayMeals.forEach((meal)=> {
                     totalCalories += meal.calories;
                 });
                 setTotalCal(totalCalories);
 
                 dispatch(addMeals(meals));
             }
-        }).catch(function(error) {
+        }).catch((error)=> {
             console.log("Ошибка при загрузке данных:", error);
-        }).finally(function() {
+        }).finally(() =>{
             setLoading(false);
         });
     };
 
-    const deleteNote = (id)=> {
+    const deleteNote = (id: string)=> {
         setDeleteLoading(true);
         axiosApi.delete(`meals/${id}.json`).then(()=> {
-            fetchData(); 
+            fetchData();
             toast.success("Блюдо удалено!");
-        }).catch(function(error) {
+        }).catch((error)=> {
             console.log("Ошибка при удалении:", error);
-        }).finally(function() {
+        }).finally(()=> {
             setDeleteLoading(false);
         });
     };
 
-    useEffect(function() {
+    useEffect(()=> {
         fetchData();
     }, []);
 
@@ -79,7 +79,7 @@ const Home = () => {
                 {loading ? (
                     <Loader />
                 ) : (
-                    dishes.map(function(meal) {
+                    dishes.map((meal)=> {
                         return (
                             <div
                                 key={meal.id}
@@ -106,7 +106,7 @@ const Home = () => {
                                     <div className="col d-flex gap-2">
                                         <button
                                             className="btn"
-                                            onClick={function() { deleteNote(meal.id); }}
+                                            onClick={()=> { deleteNote(meal.id); }}
                                             disabled={deleteLoading}
                                         >
                                             <Trash />

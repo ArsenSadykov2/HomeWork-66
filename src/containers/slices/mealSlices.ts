@@ -1,23 +1,26 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 interface MealsState {
-    allMeals: IFood[];
+    meals: IFood[];
 }
 
-const defaultState: MealsState = {
-    allMeals: [],
+
+const initialState: MealsState = {
+    meals: [],
 }
 
-export const mealsReducerSlice = createSlice({
-    name: 'mealsData',
-    initialState: defaultState,
+export const mealsSlice = createSlice({
+    name: 'Meals',
+    initialState,
     reducers: {
-        setMeals: (state, action: PayloadAction<IFood[]>) => {
-            state.allMeals = action.payload;
+        addMeals: (state, action: PayloadAction<IFood[]>) => {
+            state.meals = action.payload;
         }
     }
 });
 
-export const mealsReducer = mealsReducerSlice.reducer;
 
-export const { setMeals } = mealsReducerSlice.actions;
+export const mealsReducer = mealsSlice.reducer;
+
+export const {addMeals} = mealsSlice.actions
+
