@@ -48,7 +48,7 @@ const Home = () => {
         });
     };
 
-    const deleteNote = (id: string)=> {
+    const deleteItem = (id: string)=> {
         setDeleteLoading(true);
         axiosApi.delete(`meals/${id}.json`).then(()=> {
             fetchData();
@@ -68,7 +68,7 @@ const Home = () => {
         <div className="container">
             <div className="row justify-content-between align-items-center mb-4">
                 <p>
-                    <strong>Общее количество калорий:</strong> {loading ? <Loader /> : totalCal + " ккал"}
+                    Общее количество калорий: {loading ? <Loader /> : totalCal + " ккал"}
                 </p>
                 <NavLink to="/meals/new" className="btn btn-primary">
                     Добавить новое блюдо
@@ -92,27 +92,27 @@ const Home = () => {
                                 <div className="row justify-content-between align-items-center">
                                     <div className="col">
                                         <div>
-                                            <strong>{meal.meal_date}</strong>
+                                            {meal.meal_date}
                                         </div>
                                         <hr />
                                         <p className="opacity-50">
-                                            <small>{meal.type}</small>
+                                            {meal.type}
                                         </p>
                                         <p>{meal.description}</p>
                                     </div>
                                     <div className="col">
-                                        <strong>{meal.calories} ккал</strong>
+                                       {meal.calories} ккал
                                     </div>
                                     <div className="col d-flex gap-2">
                                         <button
                                             className="btn"
-                                            onClick={()=> { deleteNote(meal.id); }}
+                                            onClick={()=> { deleteItem(meal.id); }}
                                             disabled={deleteLoading}
                                         >
-                                            <Trash />
+                                           X
                                         </button>
                                         <NavLink to={`meals/${meal.id}/edit`} className="btn">
-                                            <Pencil />
+                                          Edit
                                         </NavLink>
                                     </div>
                                 </div>
