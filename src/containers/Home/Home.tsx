@@ -1,63 +1,51 @@
 import { useEffect, useState } from "react";
 import axiosApi from "../../axiosApi.ts";
 import { NavLink } from "react-router-dom";
-import { Pencil, Trash } from "react-bootstrap-icons";
 import Loader from "../../component/UI/Loader/Loader.tsx";
-import { toast } from "react-toastify";
-import { useDispatch, useSelector } from "react-redux";
-import {AppDispatch, RootState} from "../../component/app/store.ts";
-import {addMeals} from "../slices/mealSlices.ts";
+import {toast} from "react-toastify";
 
 const today = new Date();
 
 const Home = () => {
-    const dishes = useSelector((state: RootState) => state.meals.meals);
+    const [meals, setMeals] = useState<IFood[]>([]);
     const [loading, setLoading] = useState(false);
     const [totalCal, setTotalCal] = useState(0);
-    const [deleteLoading, setDeleteLoading] = useState(false);
-    const dispatch = useDispatch<AppDispatch>();
 
-    const fetchData = () => {
+    const fetchData = async () => {
         setLoading(true);
-        axiosApi.get("meals.json").then((response)=> {
-            if (response.data) {
-                const meals = Object.keys(response.data).map((key)=> {
-                    return { ...response.data[key], id: key };
-                });
-
-                meals.sort((a, b)=> {
-                    return new Date(b.meal_date).getTime() - new Date(a.meal_date).getTime();
-                });
-
-                const todayMeals = meals.filter((meal)=> {
-                    return new Date(meal.meal_date).toDateString() === today.toDateString();
+        try{
+            const response = await axiosApi("meals.json");
+            if(response.data){
+                const MealsObjects = Object.keys(response.data).map((key) => {
+                    return {...response.data[key], id: key};
                 });
 
                 let totalCalories = 0;
-                todayMeals.forEach((meal)=> {
+                MealsObjects.forEach((meal) => {
                     totalCalories += meal.calories;
                 });
                 setTotalCal(totalCalories);
+                setMeals(MealsObjects);
 
-                dispatch(addMeals(meals));
             }
-        }).catch((error)=> {
-            console.log("Ошибка при загрузке данных:", error);
-        }).finally(() =>{
+        }catch(e){
+            console.log(e)
+        }finally {
             setLoading(false);
-        });
+        }
     };
 
-    const deleteItem = (id: string)=> {
-        setDeleteLoading(true);
-        axiosApi.delete(`meals/${id}.json`).then(()=> {
-            fetchData();
-            toast.success("Блюдо удалено!");
-        }).catch((error)=> {
-            console.log("Ошибка при удалении:", error);
-        }).finally(()=> {
-            setDeleteLoading(false);
-        });
+    const deleteItem = async (id: string)=> {
+        try{
+            setLoading(true);
+            await axiosApi.delete(`meals/${id}.json`);
+            await fetchData();
+            toast.success("Dish deleted successfully.");
+        }catch(e){
+            console.log("Error deleting meals.", e);
+        }finally {
+           setLoading(false);
+        }
     };
 
     useEffect(()=> {
@@ -79,7 +67,7 @@ const Home = () => {
                 {loading ? (
                     <Loader />
                 ) : (
-                    dishes.map((meal)=> {
+                    meals.map((meal)=> {
                         return (
                             <div
                                 key={meal.id}
@@ -107,9 +95,8 @@ const Home = () => {
                                         <button
                                             className="btn"
                                             onClick={()=> { deleteItem(meal.id); }}
-                                            disabled={deleteLoading}
                                         >
-                                           X
+                                           Delete Meal
                                         </button>
                                         <NavLink to={`meals/${meal.id}/edit`} className="btn">
                                           Edit

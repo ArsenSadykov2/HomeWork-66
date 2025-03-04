@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import {useState, useEffect, FormEvent, ChangeEvent} from 'react';
 import Spinner from "../UI/Spinner/Spinner.tsx";
 
 
@@ -16,14 +16,14 @@ const FoodForm = ({ submitForm, isEdit, meal = defaultForm, isLoading = false })
         setForm(meal);
     }, [meal]);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         const data = { ...form };
         data.calories = Number(data.calories);
         submitForm(data);
     };
 
-    const handleChange = (e) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setForm({ ...form, [name]: value });
     };
